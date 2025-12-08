@@ -16,6 +16,11 @@ class RoomConsumer(AsyncWebsocketConsumer):
         # Join room group
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
+        
+        # Add user to participants if authenticated
+        user: User | None = self.scope.get("user")
+        if user and user.is_authenticated:
+            await self.add_user_to_participants(user.id)
 
     async def disconnect(self, close_code: int) -> None:
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
@@ -55,6 +60,17 @@ class RoomConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def create_message(self, user_id: int, room_id: int, body: str) -> Message:
-        return Message.objects.create(user_id=user_id, room_id=room_id, body=body)
+        room = Room.objects.get(id=room_id)
+        message = Message.objects.create(user_id=user_id, room_id=room_id, body=body)
+        # Ensure user is added to participants when they send a message
+        user = User.objects.get(id=user_id)
+        room.participents.add(user)
+        return message
+    
+    @database_sync_to_async
+    def add_user_to_participants(self, user_id: int) -> None:
+        room = Room.objects.get(id=self.room_id)
+        user = User.objects.get(id=user_id)
+        room.participents.add(user)
 
 

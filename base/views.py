@@ -75,8 +75,19 @@ def home(request):
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    room_messages = room.message_set.all().order_by('-created')
+    room_messages = room.message_set.all().order_by('created')
+    
+    # Ensure host is always a participant
+    if room.host:
+        room.participents.add(room.host)
+    
+    # Add current user to participants if authenticated
+    if request.user.is_authenticated:
+        room.participents.add(request.user)
+    
+    # Refresh participants list after adding users
     participants = room.participents.all()
+    
     if request.method=='POST':
         message= Message.objects.create(
             user=request.user,

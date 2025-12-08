@@ -170,7 +170,8 @@
         </div>
         <div class="thread__details">${data.message}</div>
       `;
-      threads.prepend(wrapper);
+      threads.appendChild(wrapper);
+      threads.scrollTop = threads.scrollHeight;
     };
 
     chatSocket.onclose = function() {
