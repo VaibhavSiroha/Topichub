@@ -14,9 +14,17 @@ SECRET_KEY = 'django-insecure-%gdb87gjvgfb-_bral^^m)2e=ws6hg3pk%1_0&(edt#z5*3*4i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*','*.trycloudflare.com']
+CSRF_TRUSTED_ORIGINS =[
+    'https://wav-suite-bought-swing.trycloudflare.com',
+    'https://*.trycloudflare.com'
+]
 
+# Tell Django to trust that Cloudflare is handling the HTTPS part
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Ensure these are set correctly for the tunnel
+CSRF_TRUSTED_ORIGINS = ['https://*.trycloudflare.com']
 # Application definition
 
 INSTALLED_APPS = [
