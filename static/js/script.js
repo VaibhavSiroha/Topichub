@@ -54,7 +54,7 @@ if (dropdownButton) {
 }
 
 // Upload Image
-const photoInput = document.querySelector("#avatar");
+const photoInput = document.querySelector("#id_avatar") || document.querySelector("#avatar");
 const photoPreview = document.querySelector("#preview-avatar");
 if (photoInput)
   photoInput.onchange = () => {

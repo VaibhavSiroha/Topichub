@@ -1,50 +1,47 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<main class="profile-page layout layout--3">
-  <div class="container">
-    <!-- Topics Start -->
-    {% include 'base/topics_component.html' %}
-    <!-- Topics End -->
-
-    <!-- Room List Start -->
-    <div class="roomList">
-      <div class="profile">
-        <div class="profile__avatar">
-          <div class="avatar avatar--large active">
-            <img src="{{user.avatar.url}}" />
+<main class="tp-page">
+  <div class="tp-container">
+    <div class="tp-grid">
+      <!-- Profile card -->
+      <aside class="tp-col-topics">
+        <div class="tp-sticky">
+          <div class="tp-card">
+            <div class="tp-profile">
+              <img class="tp-avatar tp-avatar--lg" src="{{ user.avatar.url }}" />
+              <h2>{{ user.name }}</h2>
+              <p class="tp-profile__handle">@{{ user.username }}</p>
+              {% if request.user == user %}
+              <a href="{% url 'update-user' %}" class="tp-btn tp-btn--ghost tp-btn--sm tp-btn--block">Edit Profile</a>
+              {% endif %}
+              <div class="tp-profile__bio">
+                <h3>About</h3>
+                <p>{{ user.bio|default:"This member hasn't written a bio yet." }}</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="profile__info">
-          <h3>{{user.name}}</h3>
-          <p>@{{user.username}}</p>
-          {% if request.user == user %}
-          <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
-          {% endif %}
-        </div>
-        <div class="profile__about">
-          <h3>About</h3>
-          <p>
-            {{user.bio}}
-          </p>
-        </div>
-      </div>
+      </aside>
 
-      <div class="roomList__header">
-        <div>
-          <h2>Study Rooms Hosted by {{user.username}}</a>
-          </h2>
+      <!-- Hosted rooms -->
+      <section>
+        <div class="tp-section-head">
+          <div>
+            <h2>Rooms by {{ user.username }}</h2>
+            <p>{{ rooms.count }} room{{ rooms.count|pluralize }} hosted</p>
+          </div>
         </div>
-      </div>
-      {% include 'base/feed_component.html' %}
+        {% include 'base/feed_component.html' %}
+      </section>
 
-
+      <!-- Activity -->
+      <aside>
+        <div class="tp-sticky">
+          {% include 'base/activity_component.html' %}
+        </div>
+      </aside>
     </div>
-    <!-- Room List End -->
-
-    <!-- Activities Start -->
-    {% include 'base/activity_component.html' %}
-    <!-- Activities End -->
   </div>
 </main>
 {% endblock content %}
