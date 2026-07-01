@@ -60,6 +60,9 @@ coverage.xml
 local_settings.py
 db.sqlite3
 
+# collectstatic output (generated at build time)
+/staticfiles
+
 # mkdocs
 /site
 
@@ -96,4 +99,3 @@ _darcs/
 npm-debug.log
 yarn-error.log
 node_modules/
-/static

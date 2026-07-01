@@ -1,4 +1,5 @@
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -9,10 +10,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%gdb87gjvgfb-_bral^^m)2e=ws6hg3pk%1_0&(edt#z5*3*4i'
+# Set SECRET_KEY in the Vercel dashboard (Project → Settings → Environment Variables).
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-%gdb87gjvgfb-_bral^^m)2e=ws6hg3pk%1_0&(edt#z5*3*4i',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Defaults to True for local dev; set DJANGO_DEBUG=False on Vercel.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*','*.trycloudflare.com']
 CSRF_TRUSTED_ORIGINS =[
@@ -45,6 +51,7 @@ AUTH_USER_MODEL='base.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -128,15 +135,28 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-MEDIA_URL ='/images/'
+STATIC_URL = '/static/'
+MEDIA_URL = '/images/'
 
-STATICFILES_DIRS=[
+STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
-MEDIA_ROOT= BASE_DIR / 'static/images'
-#STATIC_ROOT =
+# collectstatic gathers everything here at build time; WhiteNoise/Vercel serve it.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Serve compressed static files through WhiteNoise (no manifest, so a missing
+# reference never hard-crashes the whole site).
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
+
+MEDIA_ROOT = BASE_DIR / 'static/images'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
