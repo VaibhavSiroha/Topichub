@@ -142,8 +142,10 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
-# collectstatic gathers everything here at build time; WhiteNoise/Vercel serve it.
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# collectstatic gathers everything here at build time. The extra "static"
+# subfolder matters on Vercel: @vercel/static-build serves the distDir
+# ("staticfiles_build") at the site root, so files end up under /static/...
+STATIC_ROOT = BASE_DIR / 'staticfiles_build' / 'static'
 
 # Serve compressed static files through WhiteNoise (no manifest, so a missing
 # reference never hard-crashes the whole site).

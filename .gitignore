@@ -62,6 +62,7 @@ db.sqlite3
 
 # collectstatic output (generated at build time)
 /staticfiles
+/staticfiles_build
 
 # mkdocs
 /site
