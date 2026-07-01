@@ -73,6 +73,11 @@ db.sqlite3
 # Media files
 /media
 
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
 # Passwords
 *.key
 *.pem
@@ -100,3 +105,6 @@ _darcs/
 npm-debug.log
 yarn-error.log
 node_modules/
+.env
+env
+venv
