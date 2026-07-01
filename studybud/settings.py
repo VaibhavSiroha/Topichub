@@ -172,18 +172,27 @@ STATICFILES_DIRS = [
 # ("staticfiles_build") at the site root, so files end up under /static/...
 STATIC_ROOT = BASE_DIR / 'staticfiles_build' / 'static'
 
-# Serve compressed static files through WhiteNoise (no manifest, so a missing
-# reference never hard-crashes the whole site).
+MEDIA_ROOT = BASE_DIR / 'static/images'
+
+# File storage:
+#  - static files: WhiteNoise (compressed, no manifest so a missing reference
+#    never hard-crashes the whole site).
+#  - uploaded media (avatars): Vercel Blob when BLOB_READ_WRITE_TOKEN is set
+#    (required on Vercel's read-only filesystem), otherwise the local disk for
+#    development.
+if os.environ.get('BLOB_READ_WRITE_TOKEN'):
+    _DEFAULT_FILE_BACKEND = 'base.storages.VercelBlobStorage'
+else:
+    _DEFAULT_FILE_BACKEND = 'django.core.files.storage.FileSystemStorage'
+
 STORAGES = {
     'default': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'BACKEND': _DEFAULT_FILE_BACKEND,
     },
     'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
     },
 }
-
-MEDIA_ROOT = BASE_DIR / 'static/images'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
